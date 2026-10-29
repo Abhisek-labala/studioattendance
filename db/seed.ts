@@ -16,9 +16,12 @@ async function seedDatabase() {
 
   try {
     await withTransaction(async (txClient) => {
+      const adminOnly = process.argv.includes('--admin-only') || process.env.ADMIN_ONLY === 'true';
+
       // 1. Seed Studio Admin Account
-      const adminPasswordHash = await bcrypt.hash('Admin@StudioGFX2026', 10);
-      const adminEmail = 'admin@studiogfx.com';
+      const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@StudioGFX2026';
+      const adminPasswordHash = await bcrypt.hash(adminPassword, 10);
+      const adminEmail = process.env.ADMIN_EMAIL || 'admin@studiogfx.com';
 
       const adminUserResult = await txClient.query(
         `
@@ -31,6 +34,25 @@ async function seedDatabase() {
       );
       const adminUserId = adminUserResult.rows[0].id;
       console.log(`[Seed] Admin user verified: ${adminEmail} (ID: ${adminUserId})`);
+
+      // Ensure staff record exists for admin
+      await txClient.query(
+        `
+        INSERT INTO staff (user_id, staff_code, full_name, phone, email, designation, joining_date, notes)
+        VALUES ($1, 'GFX-ADMIN', 'Studio Administrator', '+91 99999 99999', $2, 'Team Leader', CURRENT_DATE, 'Master Administrator')
+        ON CONFLICT (email) DO NOTHING;
+        `,
+        [adminUserId, adminEmail]
+      );
+
+      if (adminOnly) {
+        console.log('\n[Seed Success] Admin account seeded successfully (Dummy staff & projects skipped).');
+        console.log('Credentials:');
+        console.log(`  Admin Email:    ${adminEmail}`);
+        console.log(`  Admin Password: ${adminPassword}`);
+        console.log('----------------------------------------------------');
+        return;
+      }
 
       // 2. Seed Staff Accounts & Profiles
       const staffMembers = [
