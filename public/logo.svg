@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="50%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+    <linearGradient id="goldGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <radialGradient id="lensReflect" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.3" />
+      <stop offset="40%" stop-color="#1E293B" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#0F172A" />
+    </radialGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#D97706" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Outer Rounded Square / Camera Body Frame -->
+  <rect x="6" y="6" width="108" height="108" rx="26" fill="#181B20" stroke="url(#amberGrad)" stroke-width="2.5" />
+
+  <!-- Corner Accent Dots -->
+  <circle cx="22" cy="22" r="2.5" fill="#F59E0B" opacity="0.6" />
+  <circle cx="98" cy="22" r="2.5" fill="#F59E0B" opacity="0.6" />
+
+  <!-- Outer Shutter Ring -->
+  <circle cx="60" cy="60" r="42" fill="#0B0D10" stroke="url(#amberGrad)" stroke-width="2" stroke-dasharray="3 3" opacity="0.7" />
+
+  <!-- Middle Lens Barrel -->
+  <circle cx="60" cy="60" r="35" fill="url(#lensReflect)" stroke="#334155" stroke-width="2" />
+
+  <!-- Camera Aperture Iris Blades -->
+  <g transform="rotate(25 60 60)" opacity="0.95">
+    <path d="M 60,32 L 78,52 L 68,56 Z" fill="url(#amberGrad)" />
+    <path d="M 88,60 L 68,78 L 64,68 Z" fill="url(#amberGrad)" />
+    <path d="M 60,88 L 42,68 L 52,64 Z" fill="url(#amberGrad)" />
+    <path d="M 32,60 L 52,42 L 56,52 Z" fill="url(#amberGrad)" />
+  </g>
+
+  <!-- Inner Shutter Core -->
+  <circle cx="60" cy="60" r="14" fill="#090A0D" stroke="url(#goldGlow)" stroke-width="2" filter="url(#glow)" />
+
+  <!-- Lens Glass Highlight / Reflection Flare -->
+  <path d="M 48,50 A 14 14 0 0 1 70,50" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.65" />
+  <circle cx="53" cy="55" r="2" fill="#FFFFFF" opacity="0.75" />
+
+  <!-- Flash / Sensor indicator at top right -->
+  <circle cx="86" cy="28" r="4.5" fill="url(#amberGrad)" />
+  <circle cx="86" cy="28" r="2" fill="#FEF3C7" />
+</svg>
+
