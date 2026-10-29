@@ -6,8 +6,9 @@ async function seedDatabase() {
   console.log('   Studio GFX Photography — Development Seed Script');
   console.log('----------------------------------------------------');
 
-  if (process.env.NODE_ENV === 'production') {
-    console.error('SAFETY WARNING: Development seed script cannot run in production mode.');
+  if (process.env.NODE_ENV === 'production' && process.env.ALLOW_SEED !== 'true' && !process.argv.includes('--force')) {
+    console.error('SAFETY WARNING: Development seed script is blocked in production mode.');
+    console.error('To run seeding anyway, run: ALLOW_SEED=true npm run db:seed  or  npm run db:seed -- --force');
     process.exit(1);
   }
 
