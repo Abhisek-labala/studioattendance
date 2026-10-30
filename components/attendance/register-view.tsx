@@ -379,7 +379,7 @@ export function RegisterView({
                         ) : isSunday ? (
                           <span className="text-slate-400 text-[11px]">Weekly Off</span>
                         ) : (
-                          <span className="text-slate-300 text-[11px]">&mdash;</span>
+                          <span className="text-slate-300 text-[11px]">—</span>
                         )}
                       </TableCell>
 
@@ -397,7 +397,7 @@ export function RegisterView({
                             )}
                           </div>
                         ) : (
-                          <span className="text-slate-300">&mdash;</span>
+                          <span className="text-slate-300">—</span>
                         )}
                       </TableCell>
 
@@ -415,13 +415,19 @@ export function RegisterView({
                             )}
                           </div>
                         ) : (
-                          <span className="text-slate-300">&mdash;</span>
+                          <span className="text-slate-300">—</span>
                         )}
                       </TableCell>
 
                       {/* Duration */}
                       <TableCell className="text-center font-mono text-slate-700 whitespace-nowrap">
-                        {rec && rec.total_working_minutes > 0 ? formatMinutes(rec.total_working_minutes) : '&mdash;'}
+                        {rec && rec.total_working_minutes > 0 ? (
+                          formatMinutes(rec.total_working_minutes)
+                        ) : rec ? (
+                          <span className="text-slate-400 text-xs">0h 0m</span>
+                        ) : (
+                          <span className="text-slate-300">—</span>
+                        )}
                       </TableCell>
 
                       {/* Overtime */}
@@ -431,13 +437,13 @@ export function RegisterView({
                             +{formatMinutes(rec.overtime_minutes)}
                           </span>
                         ) : (
-                          <span className="text-slate-300">&mdash;</span>
+                          <span className="text-slate-300">—</span>
                         )}
                       </TableCell>
 
                       {/* Remarks & Location */}
                       <TableCell className="text-slate-600 text-[11px] max-w-xs truncate" title={rec?.remarks || rec?.first_half_in_location || ''}>
-                        {rec?.remarks || rec?.first_half_in_location || '&mdash;'}
+                        {rec?.remarks || rec?.first_half_in_location || <span className="text-slate-300">—</span>}
                       </TableCell>
 
                       {/* Correction Action */}
