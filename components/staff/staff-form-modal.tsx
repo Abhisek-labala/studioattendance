@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useActionState, useEffect } from 'react';
-import { UserPlus, Edit2, X, AlertCircle } from 'lucide-react';
+import { UserPlus, Edit2, X, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { createStaffAction, updateStaffAction, StaffActionResponse } from '@/app/actions/staff';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +25,7 @@ interface StaffFormModalProps {
 
 export function StaffFormModal({ isOpen, onClose, staffToEdit }: StaffFormModalProps) {
   const isEditing = !!staffToEdit;
+  const [showPassword, setShowPassword] = useState(false);
   const actionToUse = isEditing ? updateStaffAction : createStaffAction;
   const [state, formAction, isPending] = useActionState<StaffActionResponse | null, FormData>(
     actionToUse,
@@ -217,13 +218,23 @@ export function StaffFormModal({ isOpen, onClose, staffToEdit }: StaffFormModalP
                 </label>
               </div>
               <div className="pt-1">
-                <Input
-                  type="password"
-                  name="loginPassword"
-                  defaultValue="Staff@StudioGFX2026"
-                  placeholder="Set initial password (min 8 chars)"
-                  className="bg-white text-xs"
-                />
+                <div className="relative">
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    name="loginPassword"
+                    defaultValue="Staff@StudioGFX2026"
+                    placeholder="Set initial password (min 8 chars)"
+                    className="bg-white text-xs pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 focus:outline-none"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
                 <p className="text-[11px] text-slate-500 mt-1">
                   Default: <span className="font-mono font-semibold">Staff@StudioGFX2026</span>
                 </p>

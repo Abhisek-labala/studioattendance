@@ -149,7 +149,9 @@ export default async function WorkRegisterPage({ searchParams }: PageProps) {
             Work Register
           </h1>
           <p className="text-xs text-slate-500">
-            Log and review shoot events, editing sheets, and studio productivity points
+            {isAdmin
+              ? 'Review and manage shoot events, editing sheets, and studio productivity points'
+              : 'Log and review shoot events, editing sheets, and studio productivity points'}
           </p>
         </div>
 
@@ -254,14 +256,16 @@ export default async function WorkRegisterPage({ searchParams }: PageProps) {
         </Card>
       </div>
 
-      {/* Submission Form Card */}
-      <WorkSubmissionCard
-        currentStaffId={session.staffId}
-        isAdmin={isAdmin}
-        staffOptions={staffOptions}
-        projectOptions={projectOptions}
-        pointRules={activePointRules}
-      />
+      {/* Submission Form Card - Only visible to staff; hidden for admin */}
+      {!isAdmin && (
+        <WorkSubmissionCard
+          currentStaffId={session.staffId}
+          isAdmin={isAdmin}
+          staffOptions={staffOptions}
+          projectOptions={projectOptions}
+          pointRules={activePointRules}
+        />
+      )}
 
       {/* Work Entries Table */}
       <WorkEntriesTable entries={entries} isAdmin={isAdmin} />

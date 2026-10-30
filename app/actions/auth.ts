@@ -121,6 +121,85 @@ export async function logoutAction(): Promise<void> {
   redirect('/login');
 }
 
+export async function resetPasswordAction(
+  _prevState: ActionResponse | null,
+  formData: FormData
+): Promise<ActionResponse> {
+  const email = formData.get('email')?.toString().trim() || '';
+  const newPassword = formData.get('newPassword')?.toString() || '';
+  const confirmPassword = formData.get('confirmPassword')?.toString() || '';
+
+  if (!email) {
+    return { success: false, error: 'Email address is required.' };
+  }
+
+  if (!newPassword || newPassword.length < 8) {
+    return { success: false, error: 'Password must be at least 8 characters in length.' };
+  }
+
+  if (newPassword !== confirmPassword) {
+    return { success: false, error: 'New passwords do not match.' };
+  }
+
+  try {
+    const userResult = await query(
+      `
+      SELECT id, email, role, is_active
+      FROM users
+      WHERE LOWER(email) = LOWER($1)
+      LIMIT 1;
+      `,
+      [email]
+    );
+
+    if (userResult.rows.length === 0) {
+      return {
+        success: false,
+        error: `No account found for "${email}". Please verify your email address.`,
+      };
+    }
+
+    const user = userResult.rows[0];
+
+    if (!user.is_active) {
+      return {
+        success: false,
+        error: 'This account has been deactivated. Please contact the administrator.',
+      };
+    }
+
+    const passwordHash = await hashPassword(newPassword);
+
+    await query(
+      `
+      UPDATE users
+      SET password_hash = $1, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $2;
+      `,
+      [passwordHash, user.id]
+    );
+
+    await logAuditEvent({
+      actorId: user.id,
+      actorEmail: user.email,
+      action: 'STAFF_UPDATED',
+      entityType: 'users',
+      entityId: user.id,
+      reason: 'Password updated via Forgot Password reset.',
+    });
+
+    return {
+      success: true,
+    };
+  } catch (err: any) {
+    console.error('[Reset Password Action Error]:', err);
+    return {
+      success: false,
+      error: 'Failed to reset password: ' + (err.message || 'Unknown error'),
+    };
+  }
+}
+
 export async function initialSetupAction(
   _prevState: ActionResponse | null,
   formData: FormData
