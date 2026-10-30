@@ -265,6 +265,7 @@ export async function loginAction(
       error: 'A server error occurred during login. Please try again later.',
     };
   }
+}
 
 export async function logoutAction(): Promise<void> {
   await destroySession();

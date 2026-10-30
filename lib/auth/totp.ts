@@ -1,22 +1,23 @@
 import crypto from 'crypto';
-import { authenticator } from 'otplib';
+import { generateSecret, generateURI, verifySync } from 'otplib';
 import QRCode from 'qrcode';
-
-// Allow 1 step (30 seconds) tolerance for client/server clock drift
-authenticator.options = { window: 1 };
 
 /**
  * Generate a new random base32 TOTP secret for a user
  */
 export function generateTwoFactorSecret(): string {
-  return authenticator.generateSecret();
+  return generateSecret();
 }
 
 /**
  * Generate otpauth:// URL standard for Google Authenticator
  */
 export function generateOtpAuthUrl(email: string, secret: string): string {
-  return authenticator.keyuri(email, 'Studio GFX', secret);
+  return generateURI({
+    label: email,
+    issuer: 'Studio GFX',
+    secret,
+  });
 }
 
 /**
@@ -34,14 +35,17 @@ export async function generateQrCodeDataUrl(otpAuthUrl: string): Promise<string>
 }
 
 /**
- * Verify a 6-digit TOTP token against the user's secret
+ * Verify a 6-digit TOTP token against the user's secret (with 30-second clock tolerance)
  */
 export function verifyTwoFactorToken(token: string, secret: string): boolean {
   try {
-    return authenticator.verify({
-      token: token.trim().replace(/\s+/g, ''),
+    const cleanToken = token.trim().replace(/\s+/g, '');
+    const result = verifySync({
+      token: cleanToken,
       secret,
+      epochTolerance: 30, // 30-second window tolerance for clock drift
     });
+    return !!result && result.valid === true;
   } catch (err) {
     console.error('Error verifying TOTP token:', err);
     return false;
